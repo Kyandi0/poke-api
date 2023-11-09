@@ -2,9 +2,23 @@ from typing import List
 import requests
 from bs4 import BeautifulSoup
 from poke_api.pokemon import Pokemon
+from poke_api.generation import PokemonGeneration
 
 
 class PokemonFetchService:
+    def get_all_generations(self) -> List[PokemonGeneration]:
+        generation_list = []
+        pokemon_list = self.get_all_pokemon()
+        gen_numbers = {pokemon.generation for pokemon in pokemon_list}
+        for gen_number in gen_numbers:
+            generation_pokemon_list = [pokemon for pokemon in pokemon_list if pokemon.generation == gen_number]
+            generation = PokemonGeneration(gen_number, generation_pokemon_list)
+            generation_list.append(generation)
+        return generation_list
+
+    def get_generation_by_gen_number(self, gen_number) -> PokemonGeneration:
+        generation_list = self.get_all_generations()
+        return generation_list[gen_number - 1]
 
     def get_pokemon_by_pokedex_number(self, pokedex_number: int) -> Pokemon:
         pokemon_list = self.get_all_pokemon()
